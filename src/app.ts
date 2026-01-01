@@ -2,7 +2,7 @@ import express from 'express';
 import type { AppConfig } from './config/env';
 import type { DatabaseConfig } from './infrastructure/database/database.types';
 import { buildDatabase } from './infrastructure/database/database';
-import { consoleLogger } from './infrastructure/database/logger/console.logger';
+import { consoleLogger } from './infrastructure/logger/console.logger';
 
 export function getDatabaseConfig(config: AppConfig): DatabaseConfig {
     return {
