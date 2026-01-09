@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import type { DatabaseConfig } from './database.types';
+import type { DatabaseConfig } from './database';
 import { transactionNamespace } from './transaction.context';
 // 🔴 MUST be executed at module load time
 Sequelize.useCLS(transactionNamespace);

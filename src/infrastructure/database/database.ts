@@ -1,7 +1,15 @@
 
 import { buildSequelizeDatabase } from "./sequelize";
-import type { DatabaseConfig } from "./database.types";
 import { consoleLogger as logger } from "../logger/console.logger";
+
+export interface DatabaseConfig {
+  host: string;
+  port: number;
+  name: string;
+  user: string;
+  password: string;
+}
+
 
 export function buildDatabase({ config }: { config: DatabaseConfig }) {
   const sequelize = buildSequelizeDatabase(config);
