@@ -1,8 +1,13 @@
 import express from 'express';
 import type { AppConfig } from './config/env';
-import type { DatabaseConfig } from './infrastructure/database/database.types';
+import type { DatabaseConfig } from './infrastructure/database/database';
 import { buildDatabase } from './infrastructure/database/database';
 import { consoleLogger } from './infrastructure/logger/console.logger';
+import { utils } from './utils';
+import { initModels } from './infrastructure/database/initModels';
+import { buildUserModule } from './modules/user';
+import { MailService } from './infrastructure/email/MailService';
+import { registerRoutes } from './http/router/RegisterRoutes';
 
 export function getDatabaseConfig(config: AppConfig): DatabaseConfig {
     return {
@@ -29,15 +34,24 @@ export async function buildApp({ config }: { config: AppConfig }) {
      * Fail fast if DB is unreachable
      */
     const connection = await db.connect();
-
+    const models = initModels(db.sequelize);
     const dependencies = {
         db,
         logger: consoleLogger,
+        utils,
+        models,
+        mailService: new MailService(),
     };
 
-    // later:
-    // buildDatabase({ config })
-    // buildModules({ config, db })
+    const userModule = buildUserModule({
+        db: dependencies.db,
+        util: dependencies.utils,
+        models: dependencies.models,
+        mailService: dependencies.mailService,
+    });
 
+    registerRoutes(app, [
+        { prefix: '/users', router: userModule.router },
+    ]);
     return app;
 }

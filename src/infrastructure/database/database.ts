@@ -1,6 +1,7 @@
 
 import { buildSequelizeDatabase } from "./sequelize";
 import { consoleLogger as logger } from "../logger/console.logger";
+import { registerGlobalHooks } from "./hooks";
 
 export interface DatabaseConfig {
   host: string;
@@ -13,7 +14,7 @@ export interface DatabaseConfig {
 
 export function buildDatabase({ config }: { config: DatabaseConfig }) {
   const sequelize = buildSequelizeDatabase(config);
-
+  registerGlobalHooks(sequelize);
   async function connect() {
     await sequelize.authenticate();
     logger.info("Database connection successful");

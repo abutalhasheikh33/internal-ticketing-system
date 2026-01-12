@@ -9,14 +9,16 @@ COLLATE utf8mb4_unicode_ci;
 
 
 CREATE TABLE user (
-  id BINARY(16) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY,
 
   name VARCHAR(100) NOT NULL,
   email VARCHAR(255) NOT NULL,
-
+  password VARCHAR(255) NOT NULL,
+  
   record_status TINYINT NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
-  created_by BINARY(16) NULL,
+  updated_at DATETIME NULL,
+  created_by CHAR(36) NULL,
 
   UNIQUE KEY uk_user_email (email)
 )
@@ -25,14 +27,15 @@ DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE role (
-  id BINARY(16) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY,
 
   name VARCHAR(50) NOT NULL,
   description VARCHAR(255),
 
   record_status TINYINT NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
-  created_by BINARY(16) NULL,
+  updated_at DATETIME NULL,
+  created_by CHAR(36) NULL,
 
   UNIQUE KEY uk_role_name (name)
 )
@@ -41,14 +44,15 @@ DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE user_role (
-  id BINARY(16) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY,
 
-  user_id BINARY(16) NOT NULL,
-  role_id BINARY(16) NOT NULL,
+  user_id CHAR(36) NOT NULL,
+  role_id CHAR(36) NOT NULL,
 
   record_status TINYINT NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
-  created_by BINARY(16) NULL,
+  updated_at DATETIME NULL,
+  created_by CHAR(36) NULL,
 
   UNIQUE KEY uk_user_role (user_id, role_id),
 
@@ -67,14 +71,15 @@ DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE category (
-  id BINARY(16) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY,
 
   name VARCHAR(100) NOT NULL,
   description VARCHAR(255),
 
   record_status TINYINT NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
-  created_by BINARY(16) NULL,
+  updated_at DATETIME NULL,
+  created_by CHAR(36) NULL,
 
   UNIQUE KEY uk_category_name (name)
 )
@@ -83,14 +88,15 @@ DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE priority (
-  id BINARY(16) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY,
 
   label VARCHAR(50) NOT NULL,
   severity_rank INT NOT NULL,
 
   record_status TINYINT NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
-  created_by BINARY(16) NULL,
+  updated_at DATETIME NULL,
+  created_by CHAR(36) NULL,
 
   UNIQUE KEY uk_priority_label (label),
   UNIQUE KEY uk_priority_severity (severity_rank)
@@ -100,27 +106,28 @@ DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE ticket (
-  id BINARY(16) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY,
 
   ticket_no VARCHAR(30) NOT NULL,
 
   title VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
 
-  created_by BINARY(16) NOT NULL,
+  created_by CHAR(36) NOT NULL,
 
-  requested_priority_id BINARY(16) NOT NULL,
-  final_priority_id BINARY(16) NULL,
+  requested_priority_id CHAR(36) NOT NULL,
+  final_priority_id CHAR(36) NULL,
 
   current_status ENUM(
     'OPEN','IN_PROGRESS','WAITING','RESOLVED','CLOSED'
   ) NOT NULL DEFAULT 'OPEN',
 
-  current_assignee_id BINARY(16) NULL,
+  current_assignee_id CHAR(36) NULL,
   closed_at DATETIME NOT NULL,
 
   record_status TINYINT NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
+  updated_at DATETIME NULL,
 
   UNIQUE KEY uk_ticket_ticket_no (ticket_no),
 
@@ -151,18 +158,19 @@ DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE ticket_assignment (
-  id BINARY(16) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY,
 
-  ticket_id BINARY(16) NOT NULL,
-  assigned_to BINARY(16) NOT NULL,
-  assigned_by BINARY(16) NOT NULL,
+  ticket_id CHAR(36) NOT NULL,
+  assigned_to CHAR(36) NOT NULL,
+  assigned_by CHAR(36) NOT NULL,
 
   assigned_at DATETIME NOT NULL,
   unassigned_at DATETIME NOT NULL,
 
   record_status TINYINT NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
-  created_by BINARY(16) NULL,
+  updated_at DATETIME NULL,
+  created_by CHAR(36) NULL,
 
   CONSTRAINT ticket_assignment_ibfk_1
     FOREIGN KEY (ticket_id) REFERENCES ticket(id)
@@ -185,19 +193,20 @@ DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE ticket_state_log (
-  id BINARY(16) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY,
 
-  ticket_id BINARY(16) NOT NULL,
+  ticket_id CHAR(36) NOT NULL,
   from_state ENUM('OPEN','IN_PROGRESS','WAITING','RESOLVED','CLOSED'),
   to_state ENUM('OPEN','IN_PROGRESS','WAITING','RESOLVED','CLOSED') NOT NULL,
 
   changed_at DATETIME NOT NULL,
-  changed_by BINARY(16) NOT NULL,
+  changed_by CHAR(36) NOT NULL,
   comment VARCHAR(255),
 
   record_status TINYINT NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
-  created_by BINARY(16) NULL,
+  updated_at DATETIME NULL,
+  created_by CHAR(36) NULL,
 
   CONSTRAINT ticket_state_log_ibfk_1
     FOREIGN KEY (ticket_id) REFERENCES ticket(id)
@@ -215,17 +224,18 @@ DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE ticket_comment (
-  id BINARY(16) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY,
 
-  ticket_id BINARY(16) NOT NULL,
-  author_id BINARY(16) NOT NULL,
+  ticket_id CHAR(36) NOT NULL,
+  author_id CHAR(36) NOT NULL,
 
   message TEXT NOT NULL,
   is_internal BOOLEAN NOT NULL DEFAULT FALSE,
 
   record_status TINYINT NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
-  created_by BINARY(16) NULL,
+  updated_at DATETIME NULL,
+  created_by CHAR(36) NULL,
 
   CONSTRAINT ticket_comment_ibfk_1
     FOREIGN KEY (ticket_id) REFERENCES ticket(id)
@@ -243,14 +253,15 @@ DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE ticket_category (
-  id BINARY(16) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY,
 
-  ticket_id BINARY(16) NOT NULL,
-  category_id BINARY(16) NOT NULL,
+  ticket_id CHAR(36) NOT NULL,
+  category_id CHAR(36) NOT NULL,
 
   record_status TINYINT NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
-  created_by BINARY(16) NULL,
+  updated_at DATETIME NULL,
+  created_by CHAR(36) NULL,
 
   UNIQUE KEY uk_ticket_category (ticket_id, category_id),
 
@@ -269,9 +280,9 @@ DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE user_session (
-  id BINARY(16) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY,
 
-  user_id BINARY(16) NOT NULL,
+  user_id CHAR(36) NOT NULL,
 
   token_id VARCHAR(255) NOT NULL,   -- JWT jti (unique)
 
@@ -281,7 +292,8 @@ CREATE TABLE user_session (
 
   record_status TINYINT NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL,
-  created_by BINARY(16) NULL,
+  updated_at DATETIME NULL,
+  created_by CHAR(36) NULL,
 
   UNIQUE KEY uk_user_session_token_id (token_id),
 
@@ -295,3 +307,4 @@ CREATE TABLE user_session (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
+
